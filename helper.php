@@ -264,6 +264,8 @@ class helper_plugin_attribute extends DokuWiki_Plugin
             $files
         );
 
+        sort($users);
+
         return $users;
     }
 
