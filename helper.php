@@ -15,6 +15,7 @@ class helper_plugin_attribute extends DokuWiki_Plugin
     public $success = false;
     protected $storepath = null;
     protected $cache = null;
+    protected $secure = true;
 
     /**
      * Constructor
@@ -33,6 +34,19 @@ class helper_plugin_attribute extends DokuWiki_Plugin
         $this->success = true;
         // Create a memory cache for this execution.
         $this->cache = array();
+    }
+
+    /**
+     * Allows overriding the secure setting
+     *
+     * When set to false, no user validation checks are made.
+     *
+     * @param bool $secure
+     * @return void
+     */
+    public function setSecure($secure)
+    {
+        $this->secure = $secure;
     }
 
     /**
@@ -120,12 +134,16 @@ class helper_plugin_attribute extends DokuWiki_Plugin
      * Otherwise the name of the logged in user is supplied. If no user is
      * logged in, null is returned.
      *
+     * This check can be disabled with the setSecure() method.
+     *
      * @param string $user
      *
      * @return null|string
      */
     private function validateUser($user)
     {
+        if(!$this->secure) return $user;
+
         // We need a special circumstance.  If a user is not logged in, but we
         // are performing a login, enable access to the attributes of the user
         // being logged in IF DIRECTLY SPECIFIED.
