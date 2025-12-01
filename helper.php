@@ -293,7 +293,7 @@ class helper_plugin_attribute extends DokuWiki_Plugin
      * @param string $namespace
      * @param string $attribute
      * @param string $value
-     * @param null   $user
+     * @param string|null $user
      *
      * @return bool
      */
