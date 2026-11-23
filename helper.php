@@ -24,8 +24,8 @@ class helper_plugin_attribute extends DokuWiki_Plugin
     {
         $this->loadConfig();
         // Create the path used for attribute data.
-        $path = substr($this->conf['store'], 0, 1) == '/' ? $this->conf['store'] : DOKU_INC . $this->conf['store'];
-        $this->storepath = ($this->conf['store'] === '' || !io_mkdir_p($path)) ? null : $path;
+        $path = $this->getStorePath();
+        $this->storepath = ($path === null || !io_mkdir_p($path)) ? null : $path;
         // A directory is needed.
         if (is_null($this->storepath)) {
             msg("Attribute: Configuration item 'store' is not set to a writeable directory.", -1);
@@ -34,6 +34,29 @@ class helper_plugin_attribute extends DokuWiki_Plugin
         $this->success = true;
         // Create a memory cache for this execution.
         $this->cache = array();
+    }
+
+    /**
+     * Get the directory for the attribute data
+     *
+     * An empty store setting means the attribute directory in the savedir. Other relative paths are relative to
+     * DOKU_INC.
+     *
+     * @return string|null null when the savedir is not available
+     */
+    protected function getStorePath()
+    {
+        global $conf;
+        $store = $this->conf['store'];
+
+        if ($store === '') {
+            $savedir = init_path($conf['savedir']);
+            if ($savedir === '') return null;
+            return $savedir . '/attribute';
+        }
+
+        if (substr($store, 0, 1) == '/') return $store;
+        return DOKU_INC . $store;
     }
 
     /**
